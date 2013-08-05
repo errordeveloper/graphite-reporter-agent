@@ -30,9 +30,9 @@ import com.yammer.metrics.reporting.GraphiteReporter;
 
 public class GraphiteReporterAgent {
 
-    private static final String GRAPHITE_HOST = "graphite.example.com";
-    private static final int GRAPHITE_PORT = 2003;
-    private static final long REFRESH_PERIOD = 10;
+    private static final String GRAPHITE_HOST = System.getProperty("graphite.host", "localhost");
+    private static final int GRAPHITE_PORT =  Integer.parseInt(System.getProperty("graphite.port", "2003"));
+    private static final long REFRESH_PERIOD = Integer.parseInt(System.getProperty("graphite.refresh_period", "10"));
     // Check TimeUnit javadoc for other possible values here like TimeUnit.MINUTES, etc
     private static final TimeUnit REFRESH_PERIOD_UNIT = TimeUnit.SECONDS;
 
@@ -61,7 +61,7 @@ public class GraphiteReporterAgent {
         // Don't move this as a constant because if the hostname changes we
         // want to update it
         String hostname = InetAddress.getLocalHost().getHostName();
-        String prefix = "cassandra." + hostname.split("\\.")[0];
+        String prefix = "stats.hosts." + hostname.split("\\.")[0] + ".cassandra";
 
         GraphiteReporter.enable(Metrics.defaultRegistry(), REFRESH_PERIOD, REFRESH_PERIOD_UNIT, GRAPHITE_HOST, GRAPHITE_PORT, prefix, CASS_PREDICATE);
     }
